@@ -3,8 +3,8 @@ import { book } from "../interfaces/book.interface";
 
 const bookSchema = new Schema<book>(
   {
-    title: { type: String, required: true },
-    author: { type: String, required: true },
+    title: { type: String, required: true, trim: true },
+    author: { type: String, required: true, trim: true },
     genre: {
       type: String,
       required: true,
@@ -18,8 +18,8 @@ const bookSchema = new Schema<book>(
       ],
       uppercase: true,
     },
-    isbn: { type: String, required: true, unique: true },
-    description: { type: String, default: "NO DESCRIPTION FOUND" },
+    isbn: { type: Number, required: true, unique: true },
+    description: { type: String, default: "NO DESCRIPTION FOUND", trim: true },
     copies: { type: Number, required: true, min: 0 },
     available: { type: Boolean, default: true },
   },
@@ -28,6 +28,8 @@ const bookSchema = new Schema<book>(
     versionKey: false,
   }
 );
+
+// need to create the instance of the book model here
 
 const Book = model<book>("Book", bookSchema);
 

@@ -8,7 +8,7 @@ interface book {
     | "HISTORY"
     | "BIOGRAPHY"
     | "FANTASY";
-  isbn: string;
+  isbn: number;
   description?: string;
   copies: number;
   available?: boolean;
