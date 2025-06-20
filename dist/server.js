@@ -31,6 +31,10 @@ const PORT = process.env.PORT || 5000;
         });
     }
     catch (error) {
-        console.log(error);
+        console.log({
+            message: "Failed to connect to MongoDB",
+            success: false,
+            error: error,
+        });
     }
 }))();
