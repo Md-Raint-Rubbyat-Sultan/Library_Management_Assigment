@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { book } from "../interfaces/book.interface";
+import Borrow from "./borrow.model";
 
 const bookSchema = new Schema<book>(
   {
@@ -29,12 +30,17 @@ const bookSchema = new Schema<book>(
   }
 );
 
-// need to create the instance of the book model here
-bookSchema.method("availablity", function (borrowedCopies: number = 0) {
+bookSchema.post("findOneAndDelete", async function (doc) {
+  await Borrow.deleteMany({
+    book: doc._id,
+  });
+});
+
+bookSchema.method("availablity", async function (borrowedCopies: number = 0) {
   this.copies -= borrowedCopies;
   if (this.copies === 0) {
     this.available = false;
-    this.save();
+    await this.save();
   }
 });
 

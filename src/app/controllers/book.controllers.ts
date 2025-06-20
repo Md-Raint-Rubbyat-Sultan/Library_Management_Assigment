@@ -169,7 +169,7 @@ bookRequest.delete(
       const { bookId } = req.params;
 
       // find the book by ID and delete it
-      const deletedBook = await Book.findByIdAndDelete(bookId);
+      const deletedBook = await Book.findOneAndDelete({ _id: bookId });
 
       res.status(200).send({
         success: true,
