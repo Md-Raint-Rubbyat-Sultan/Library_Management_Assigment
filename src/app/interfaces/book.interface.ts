@@ -1,4 +1,8 @@
-interface book {
+interface availablity {
+  availablity: (borrowedCopies: number) => void;
+}
+
+interface book extends availablity {
   title: string;
   author: string;
   genre:

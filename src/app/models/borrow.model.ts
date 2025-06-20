@@ -26,6 +26,7 @@ borrowSchema.post<borrow>("save", async function () {
     await bookDoc.save();
   }
 });
+
 const Borrow = model<borrow>("Borrow", borrowSchema);
 
 export default Borrow;

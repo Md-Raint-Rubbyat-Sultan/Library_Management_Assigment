@@ -30,6 +30,13 @@ const bookSchema = new Schema<book>(
 );
 
 // need to create the instance of the book model here
+bookSchema.method("availablity", function (borrowedCopies: number = 0) {
+  this.copies -= borrowedCopies;
+  if (this.copies === 0) {
+    this.available = false;
+    this.save();
+  }
+});
 
 const Book = model<book>("Book", bookSchema);
 

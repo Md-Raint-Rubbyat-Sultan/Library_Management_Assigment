@@ -122,6 +122,19 @@ bookRequest.put(
       const { bookId } = req.params;
       const updatedDoc = req.body;
 
+      // check if the updatedDoc has copies field
+      if (updatedDoc?.copies) {
+        const book = await Book.findById(bookId);
+        if (!book) {
+          return res.status(404).send({
+            success: false,
+            message: "Book not found",
+          });
+        }
+        updatedDoc.copies += book.copies;
+        updatedDoc.available = updatedDoc.copies > 0;
+      }
+
       // find the book by ID and update it
       const updatedBook = await Book.findByIdAndUpdate(
         bookId,

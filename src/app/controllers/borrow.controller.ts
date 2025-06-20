@@ -1,16 +1,18 @@
 import express, { Request, Response, NextFunction } from "express";
 import Borrow from "../models/borrow.model";
 import Book from "../models/book.model";
+import { title } from "process";
 
 const borrowRouter = express.Router();
 
+// Route to create a new borrow
 borrowRouter.post(
   "/borrow",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { book, quantity, dueDate } = req.body;
 
-      // Validate required fields
+      // check all required fields
       if (!book || !quantity || !dueDate) {
         return res.status(400).send({
           success: false,
@@ -26,10 +28,9 @@ borrowRouter.post(
       });
 
       if (!isEnoughCopies) {
-        return res.status(400).send({
+        return res.status(200).send({
           success: false,
           message: "Not enough copies available",
-          error: "Validation Error",
         });
       }
 
@@ -42,14 +43,61 @@ borrowRouter.post(
 
       await newBorrow.save();
 
-      //   need to create the instace of the book model here
+      // Update the book's available copies
+      if (isEnoughCopies && isEnoughCopies.copies - quantity === 0) {
+        isEnoughCopies.availablity(quantity);
+      }
 
       // Send the borrow data
       res.status(201).send({
         success: true,
         message: "Book borrowed successfully",
         data: newBorrow,
-        isEnoughCopies: isEnoughCopies.copies - 2, // gives the updated number of copies
+      });
+    } catch (error: any) {
+      error.status = 500;
+      next(error);
+    }
+  }
+);
+
+// Route to get borrowed books summary
+borrowRouter.get(
+  "/borrow",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Aggregate borrowed books summary
+      const borrowedBooksSummary = await Borrow.aggregate([
+        {
+          $lookup: {
+            from: "books",
+            localField: "book",
+            foreignField: "_id",
+            as: "book",
+          },
+        },
+        {
+          $unwind: "$book",
+        },
+        {
+          $group: {
+            _id: "$book._id",
+            book: { $first: { title: "$book.title", isbn: "$book.isbn" } },
+            totalQuantity: { $sum: "$quantity" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+          },
+        },
+      ]);
+
+      // send the summary data
+      res.status(200).send({
+        success: true,
+        message: "Borrowed books summary retrieved successfully",
+        data: borrowedBooksSummary,
       });
     } catch (error: any) {
       error.status = 500;
