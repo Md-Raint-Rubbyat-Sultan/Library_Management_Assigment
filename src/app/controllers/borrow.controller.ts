@@ -24,7 +24,7 @@ borrowRouter.post(
       // Validate quantity
       const isEnoughCopies = await Book.findOne({
         _id: book,
-        copies: { $gte: quantity },
+        copies: { $gte: Number(quantity) },
       });
 
       if (!isEnoughCopies) {
@@ -44,8 +44,8 @@ borrowRouter.post(
       await newBorrow.save();
 
       // Update the book's available copies
-      if (isEnoughCopies && isEnoughCopies.copies - quantity === 0) {
-        isEnoughCopies.availablity(quantity);
+      if (isEnoughCopies && isEnoughCopies.copies - Number(quantity) === 0) {
+        isEnoughCopies.availablity(Number(quantity));
       }
 
       // Send the borrow data

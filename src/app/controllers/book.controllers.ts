@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
 import Book from "../models/book.model";
-import e from "express";
 
 const bookRequest = express.Router();
 
@@ -124,6 +123,14 @@ bookRequest.put(
 
       // check if the updatedDoc has copies field
       if (updatedDoc?.copies) {
+        // check copies a valid number and non-negative
+        if (typeof updatedDoc.copies !== "number" || updatedDoc.copies < 0) {
+          return res.status(400).send({
+            success: false,
+            message: "Copies must be a non-negative number",
+          });
+        }
+
         const book = await Book.findById(bookId);
         if (!book) {
           return res.status(404).send({
