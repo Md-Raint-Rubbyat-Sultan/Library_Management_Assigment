@@ -138,7 +138,7 @@ bookRequest.delete("/books/:bookId", (req, res, next) => __awaiter(void 0, void 
     try {
         const { bookId } = req.params;
         // find the book by ID and delete it
-        const deletedBook = yield book_model_1.default.findByIdAndDelete(bookId);
+        const deletedBook = yield book_model_1.default.findOneAndDelete({ _id: bookId });
         res.status(200).send({
             success: true,
             message: "Book deleted successfully",
