@@ -19,7 +19,7 @@ const bookSchema = new Schema<book>(
       ],
       uppercase: true,
     },
-    isbn: { type: Number, required: true, unique: true },
+    isbn: { type: String, required: true, unique: true },
     description: { type: String, default: "NO DESCRIPTION FOUND", trim: true },
     copies: { type: Number, required: true, min: 0 },
     available: { type: Boolean, default: true },

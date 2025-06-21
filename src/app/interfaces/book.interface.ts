@@ -12,7 +12,7 @@ interface book extends availablity {
     | "HISTORY"
     | "BIOGRAPHY"
     | "FANTASY";
-  isbn: number;
+  isbn: string;
   description?: string;
   copies: number;
   available?: boolean;
