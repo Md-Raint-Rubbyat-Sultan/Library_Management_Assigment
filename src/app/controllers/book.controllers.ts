@@ -63,25 +63,33 @@ bookRequest.get(
         sortBy = "createdAt",
         sort = "asc",
         limit = 10,
+        page = 0,
       } = req.query;
 
       // filter validation
       let books: unknown;
       if (!filter || typeof filter !== "string") {
         books = await Book.find({})
-          .sort({ [sortBy as string]: sort === "desc" ? -1 : 1 })
+          .sort({
+            [sortBy as string]: sort === "desc" ? -1 : 1,
+          })
+          .skip(Number(page) * Number(limit))
           .limit(Number(limit));
       } else {
         books = await Book.find({ genre: filter.toUpperCase() })
           .sort({ [sortBy as string]: sort === "desc" ? -1 : 1 })
+          .skip(Number(page) * Number(limit))
           .limit(Number(limit));
       }
+
+      const docCount = await Book.find({}).estimatedDocumentCount();
 
       // send the books data
       res.status(200).send({
         success: true,
         message: "Books retrieved successfully",
         data: books,
+        docCount,
       });
     } catch (error: any) {
       error.status = 404;

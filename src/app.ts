@@ -1,8 +1,16 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import bookRequest from "./app/controllers/book.controllers";
 import borrowRouter from "./app/controllers/borrow.controller";
+import cors from "cors";
+import { config } from "dotenv";
+config();
 
 const app: Application = express();
+app.use(
+  cors({
+    origin: ["http://localhost:5173", process.env.CLIENT_URL as string],
+  })
+);
 app.use(express.json());
 
 app.use("/api", bookRequest);

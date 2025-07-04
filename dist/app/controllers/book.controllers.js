@@ -53,24 +53,30 @@ bookRequest.post("/books", (req, res, next) => __awaiter(void 0, void 0, void 0,
 // Route to get all books
 bookRequest.get("/books", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { filter, sortBy = "createdAt", sort = "asc", limit = 10, } = req.query;
+        const { filter, sortBy = "createdAt", sort = "asc", limit = 10, page = 0, } = req.query;
         // filter validation
         let books;
         if (!filter || typeof filter !== "string") {
             books = yield book_model_1.default.find({})
-                .sort({ [sortBy]: sort === "desc" ? -1 : 1 })
+                .sort({
+                [sortBy]: sort === "desc" ? -1 : 1,
+            })
+                .skip(Number(page) * Number(limit))
                 .limit(Number(limit));
         }
         else {
             books = yield book_model_1.default.find({ genre: filter.toUpperCase() })
                 .sort({ [sortBy]: sort === "desc" ? -1 : 1 })
+                .skip(Number(page) * Number(limit))
                 .limit(Number(limit));
         }
+        const docCount = yield book_model_1.default.find({}).estimatedDocumentCount();
         // send the books data
         res.status(200).send({
             success: true,
             message: "Books retrieved successfully",
             data: books,
+            docCount,
         });
     }
     catch (error) {

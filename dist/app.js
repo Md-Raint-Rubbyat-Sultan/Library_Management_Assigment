@@ -6,7 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const book_controllers_1 = __importDefault(require("./app/controllers/book.controllers"));
 const borrow_controller_1 = __importDefault(require("./app/controllers/borrow.controller"));
+const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+}));
 app.use(express_1.default.json());
 app.use("/api", book_controllers_1.default);
 app.use("/api", borrow_controller_1.default);
